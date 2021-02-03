@@ -2,20 +2,23 @@
 
 [format]html[/format]
 
-[subject]پرداخت فاکتور[/subject]
+[subject]%site_name% - Your invoice was paid[/subject]
 
 [body]
 <div style="padding: 1px; direction: rtl;">
 	<h3 style="font-size: 1.1em;">%first_name% %last_name% عزیز</h3>
-	<div style="padding: 3px 0; margin: 1px; 0">
-فاکتور شماره <strong>%invoice_id%</strong> مربوط به سفارش %order_id% و به مبلغ %invoice_price% و شامل موارد %product_list% در وب سایت %site_name% پرداخت گردید. برای مشاهده جزئیات فاکتور بر روی لینک زیر کلیک نمایید</div>
-	<div style="padding: 3px 0; margin: 1px; 0">
-        <a href="%order_link%" title="جزییات فاکتور">%order_link%</a>
+	<div style="padding: 3px 0; margin: 1px 0;">با تشکر از خرید شما !</div>
+	<div style="padding: 3px 0; margin: 1px 0;">فهرست سفارش های شما به شرح زیر است : %product_list%</div>
+	<div style="padding: 3px 0; margin: 1px 0;">
+        <a href="%order_link%" title="اطلاعات سفارش شما">%order_link%</a>
 	</div>
-	<div style="padding: 3px 0; margin: 1px; 0">لطفا به این پیام پاسخی ندهید</div>
+	<div style="padding: 3px 0; margin: 1px 0;">فاکتور شما با شماره <strong>%invoice_id%</strong> با موفقیت در وب سایت %site_name% پرداخت گردید. لطفا برای مشاهده اطلاعات سفارش بر روی لینک زیر کلیک نمایید.</div>
+	<div style="padding: 3px 0; margin: 1px 0;">لطفا به این ایمیل پاسخ ندهید</div>
 	<div style="margin-top: 10px">
         <a href="%site_url%" title="%site_name%">%site_name%</a>
     </div>
     <div>%site_mail_footer%</div>
+    <div style="text-align:center; margin:10px 0;font-size:0.8em; color:#777"> %sellerinfo% </div>
+
 </div>
 [/body]

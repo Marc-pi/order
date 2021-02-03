@@ -1,17 +1,17 @@
-[comment]Expired invoice to user[/comment]
+[comment]ٍExpired invoice to user[/comment]
 
 [format]html[/format]
 
-[subject]سررسید فاکتور[/subject]
+[subject]%site_name% - Due date invoice[/subject]
 
 [body]
 <div style="padding: 1px; direction: rtl;">
 	<h3 style="font-size: 1.1em;">%first_name% %last_name% عزیز</h3>
-	<div style="padding: 3px 0; margin: 1px; 0">تاریخ سر رسید فاکتور شماره <strong>%invoice_id%</strong> شما در وب سایت %site_name% طی %day% روز آینده فرا می رسد. برای مشاهده جزئیات فاکتور بر روی لینک زیر کلیک نمایید</div>
-	<div style="padding: 3px 0; margin: 1px; 0">
-        <a href="%order_link%" title="جزییات سفارش">%order_link%</a>
+	<div style="padding: 3px 0; margin: 1px 0;">Your <strong>%invoice_id%</strong> invoice due date arrives on next %day% days on %site_name% website. please click on this link to see details</div>
+	<div style="padding: 3px 0; margin: 1px 0;">
+        <a href="%order_link%" title="اطلاعات سفارش شما">%order_link%</a>
 	</div>
-	<div style="padding: 3px 0; margin: 1px; 0">لطفا به این پیام پاسخی ندهید</div>
+	<div style="padding: 3px 0; margin: 1px 0;">لطفا به این ایمیل پاسخ ندهید</div>
 	<div style="margin-top: 10px">
         <a href="%site_url%" title="%site_name%">%site_name%</a>
     </div>
