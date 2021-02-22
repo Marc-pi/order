@@ -17,18 +17,21 @@ use Module\Order\Gateway\AbstractGateway;
 use Pi;
 use Pi\Application\Api\AbstractApi;
 
+/*
+ * Pi::api('stripe', 'order')->getOrderByTransfertIds($transfertIds);
+ * Pi::api('stripe', 'order')->getOrderByPaymentIntentIds($paymentIntentIds);
+ */
 
 class Stripe extends AbstractApi
 {
     public function getOrderByTransfertIds($transfertIds)
     {
-
         if (empty($transfertIds) || count($transfertIds) == 0) {
             return [];
         }
 
         foreach ($transfertIds as $transfert) {
-            $whereId[]  = 'invoice_installment.extra LIKE "%\"transfer\":\"' . $transfert . '\"%"';
+            $whereId[] = 'invoice_installment.extra LIKE "%\"transfer\":\"' . $transfert . '\"%"';
         }
         $where = implode(' OR ', $whereId);
 
@@ -58,17 +61,16 @@ class Stripe extends AbstractApi
         }
 
         foreach ($paymentIntentIds as $paymentIntent) {
-            $whereId[]  = 'extra LIKE "%\"payment_intent\":\"' . $paymentIntent . '\"%"';
+            $whereId[] = 'extra LIKE "%\"payment_intent\":\"' . $paymentIntent . '\"%"';
         }
         $where = implode(' OR ', $whereId);
 
         $select = Pi::model('order', 'order')->select()->where($where);
         $rowset = Pi::model('order', 'order')->selectWith($select);
-        $list = [];
+        $list   = [];
         foreach ($rowset as $row) {
             $list[$row->id] = $row->toArray();
         }
         return $list;
     }
-
-}	
+}

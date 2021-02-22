@@ -14,7 +14,7 @@
 namespace Module\Order\Form;
 
 use Pi;
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 
 class InstallmentFilter extends InputFilter
 {
@@ -55,6 +55,5 @@ class InstallmentFilter extends InputFilter
                 'required' => false,
             ]
         );
-
     }
 }

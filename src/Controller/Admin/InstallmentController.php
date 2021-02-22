@@ -57,7 +57,7 @@ class InstallmentController extends ActionController
                 $row = $this->getModel('invoice_installment')->find($id);
                 if ($readonly) {
                     $values = [
-                        'comment' => $values['comment']
+                        'comment' => $values['comment'],
                     ];
                 }
                 $row->assign($values);
@@ -84,6 +84,5 @@ class InstallmentController extends ActionController
         // Set view
         $this->view()->setTemplate('installment-edit');
         $this->view()->assign('form', $form);
-
     }
 }

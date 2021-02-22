@@ -68,9 +68,9 @@ class CustomerAddress extends AbstractApi
         $uid = Pi::user()->getId();
 
         // Select
-        $where    = ['uid' => $uid, 'delivery_favourite' => 1];
-        $select   = Pi::model('customer_address', $this->getModule())->select()->where($where)->order('id DESC');
-        $row      = Pi::model('customer_address', $this->getModule())->selectWith($select)->current();
+        $where  = ['uid' => $uid, 'delivery_favourite' => 1];
+        $select = Pi::model('customer_address', $this->getModule())->select()->where($where)->order('id DESC');
+        $row    = Pi::model('customer_address', $this->getModule())->selectWith($select)->current();
         if ($row) {
             $address = $this->canonizeAddress($row);
             return $address;
@@ -110,7 +110,6 @@ class CustomerAddress extends AbstractApi
         // return
         $address = $this->canonizeAddress($address);
         return $address;
-
     }
 
     public function updateAddress($values)
@@ -142,7 +141,6 @@ class CustomerAddress extends AbstractApi
 
         $row = Pi::model('customer_address', 'order')->find($id, 'id');
         if (!$row || $row->uid != $uid) {
-
             return [];
         }
 

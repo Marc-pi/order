@@ -15,8 +15,8 @@ namespace Module\Order\Api;
 
 use Pi;
 use Pi\Application\Api\AbstractApi;
-use Zend\Json\Json;
-use Zend\Math\Rand;
+use Laminas\Json\Json;
+use Laminas\Math\Rand;
 
 /*
  * Pi::api('order', 'order')->getOrder($id);
@@ -34,6 +34,7 @@ use Zend\Math\Rand;
  * Pi::api('order', 'order')->updateOrderInfo($order);
  * Pi::api('order', 'order')->unsetOrderInfo();
  * Pi::api('order', 'order')->getDetail($where);
+ * Pi::api('order', 'order')->autoCancelOrder();
  */
 
 class Order extends AbstractApi
@@ -85,7 +86,9 @@ class Order extends AbstractApi
         $config = Pi::service('registry')->config->read($this->getModule());
 
         $year  = $year ?: date('Y');
-        $count = Pi::model('order', 'order')->count(['time_create >= ' . strtotime('01-01-' . $year) . ' AND time_create < ' . strtotime('01-01-' . ($year + 1))]);
+        $count = Pi::model('order', 'order')->count(
+            ['time_create >= ' . strtotime('01-01-' . $year) . ' AND time_create < ' . strtotime('01-01-' . ($year + 1))]
+        );
         $num   = $year . sprintf('%03d', ($count + 1));
 
         return sprintf('%s-%s', $config['order_code_prefix'], $num);
@@ -210,7 +213,7 @@ class Order extends AbstractApi
         // Set date_format
         $pattern = !empty($config['date_format']) ? $config['date_format'] : 'yyyy-MM-dd';
         // boject to array
-        if (!is_array($order)) {
+        if (is_object($order)) {
             $order = $order->toArray();
         }
         // Set time_create_view
@@ -222,90 +225,99 @@ class Order extends AbstractApi
         // Set url_update_order
         $order['url_update_order'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'updateOrder',
-                'id'         => $order['id'],
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'updateOrder',
+                    'id'         => $order['id'],
+                ]
             )
         );
         // Set url_update_payment
         $order['url_update_invoice'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'updateInvoice',
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'updateInvoice',
+                ]
             )
         );
         // Set url_update_delivery
         $order['url_update_delivery'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'updateDelivery',
-                'id'         => $order['id'],
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'updateDelivery',
+                    'id'         => $order['id'],
+                ]
             )
         );
         // Set url_update_delivery
         $order['url_update_canPay'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'updateCanPay',
-                'id'         => $order['id'],
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'updateCanPay',
+                    'id'         => $order['id'],
+                ]
             )
         );
         //
         $order['url_update_note'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'updateNote',
-                'id'         => $order['id'],
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'updateNote',
+                    'id'         => $order['id'],
+                ]
             )
         );
         // Set url_edit
         $order['url_edit'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'edit',
-                'id'         => $order['id'],
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'edit',
+                    'id'         => $order['id'],
+                ]
             )
         );
         // Set url_print
         $order['url_print'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'print',
-                'id'         => $order['id'],
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'print',
+                    'id'         => $order['id'],
+                ]
             )
         );
         // Set url_view
         $order['url_view'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'view',
-                'id'         => $order['id'],
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'view',
+                    'id'         => $order['id'],
+                ]
             )
         );
         // Set url_view
         $order['url_list_user'] = Pi::url(
             Pi::service('url')->assemble(
-                'admin', [
-                'controller' => 'order',
-                'action'     => 'listUser',
-                'uid'        => $order['uid'],
-            ]
+                'admin',
+                [
+                    'controller' => 'order',
+                    'action'     => 'listUser',
+                    'uid'        => $order['uid'],
+                ]
             )
         );
         // Status order
@@ -377,8 +389,8 @@ class Order extends AbstractApi
 
             $list[$row->id] = $row->toArray();
             if ($row->module != 'order' && Pi::service('module')->isActive($row->module)) {
-                $extra = json_decode($row->extra, true);
-                $extra['order'] = isset($options['order']) ? $options['order'] : false;
+                $extra                     = json_decode($row->extra, true);
+                $extra['order']            = isset($options['order']) ? $options['order'] : false;
                 $list[$row->id]['details'] = Pi::api('order', $row->module)->getProductDetails($row->product, $extra);
             } else {
                 $list[$row->id]['details'] = [
@@ -426,8 +438,10 @@ class Order extends AbstractApi
         // Update order
         $order->time_payment = time();
         $order->save();
+
         // Canonize order
         $order = $this->canonizeOrder($order);
+
         // Get order detail
         $detail = [];
         $where  = ['order' => $orderId];
@@ -442,8 +456,10 @@ class Order extends AbstractApi
             }
             $module = $row->module;
         }
+
         // Update module and get back url
         $backUrl = Pi::api('order', $module)->postPaymentUpdate($order, $detail);
+
         // Accept Order Credit
         Pi::api('credit', 'order')->acceptOrderCredit($orderId, $invoiceId);
 
@@ -451,12 +467,13 @@ class Order extends AbstractApi
         if (!isset($backUrl) || empty($backUrl)) {
             $backUrl = Pi::url(
                 Pi::service('url')->assemble(
-                    'order', [
-                    'module'     => $this->getModule(),
-                    'controller' => 'detail',
-                    'action'     => 'index',
-                    'id'         => $order->id,
-                ]
+                    'order',
+                    [
+                        'module'     => $this->getModule(),
+                        'controller' => 'detail',
+                        'action'     => 'index',
+                        'id'         => $order->id,
+                    ]
                 )
             );
         }
@@ -477,16 +494,18 @@ class Order extends AbstractApi
         if (isset($order['type_payment']) && $order['type_payment'] == 'installment') {
             $checkout = Pi::url(
                 Pi::service('url')->assemble(
-                    'order', [
-                    'module'     => 'order',
-                    'controller' => 'checkout',
-                    'action'     => 'installment',
-                ]
+                    'order',
+                    [
+                        'module'     => 'order',
+                        'controller' => 'checkout',
+                        'action'     => 'installment',
+                    ]
                 )
             );
         } else {
             $checkout = Pi::service('url')->assemble(
-                    'order', [
+                'order',
+                [
                     'module'     => 'order',
                     'controller' => 'checkout',
                     'action'     => 'index',
@@ -495,7 +514,6 @@ class Order extends AbstractApi
             if ($completeUrl) {
                 $checkout = Pi::url($checkout);
             }
-
         }
         return $checkout;
     }
@@ -530,8 +548,57 @@ class Order extends AbstractApi
         }
         $order->status_order = \Module\Order\Model\Order::STATUS_ORDER_CANCELLED;
         $order->save();
+
+        // Canonize order
+        $order = $this->canonizeOrder($order);
+
+        // Post cancel order
+        $detail = $this->getDetail(['order' => $order['id']]);
+        if (isset($detail) && !empty($detail) && isset($detail['module']) && !empty($detail['module']) && Pi::service('module')->isActive($detail['module'])) {
+            Pi::api('order', $detail['module'])->postCancelUpdate($order, $detail);
+        }
     }
 
+    public function autoCancelOrder()
+    {
+        // Get config
+        $config = Pi::service('registry')->config->read($this->getModule());
+
+        if (intval($config['order_auto_cancel_time']) > 0) {
+            // Set where
+            $where = [
+                'time_create < ?' => time() - (intval($config['order_auto_cancel_time']) * 60),
+                'can_pay'         => 1,
+                'status_order'    => [
+                    \Module\Order\Model\Order::STATUS_ORDER_CANCELLED,
+                    \Module\Order\Model\Order::STATUS_ORDER_PENDING,
+                ],
+            ];
+
+            $select = Pi::model('order', 'order')->select()->where($where);
+            $rowset = Pi::model('detail', 'order')->selectWith($select);
+
+            foreach ($rowset as $order) {
+
+                // Cancel order
+                $order->status_order = \Module\Order\Model\Order::STATUS_ORDER_CANCELLED;
+                $order->save();
+
+                // Canonize order
+                $order = $this->canonizeOrder($order);
+
+                // Post cancel order
+                $detail = $this->getDetail(['order' => $order['id']]);
+                if (isset($detail) && !empty($detail) && isset($detail['module']) && !empty($detail['module'])
+                    && Pi::service('module')->isActive(
+                        $detail['module']
+                    )
+                ) {
+                    Pi::api('order', $detail['module'])->postCancelUpdate($order, $detail);
+                }
+            }
+        }
+    }
 
     public function getDetail($where)
     {
@@ -604,7 +671,10 @@ class Order extends AbstractApi
             ->from(['order' => $orderTable])
             ->join(['invoice' => $invoiceTable], 'invoice.order = order.id', ['status'])
             ->join(['invoice_installment' => $invoiceInstallmentTable], 'invoice_installment.invoice = invoice.id')
-            ->where(['order.id' => $id, 'invoice.status != ' . \Module\Order\Model\Invoice::STATUS_INVOICE_CANCELLED, 'invoice_installment.status_payment' =>  \Module\Order\Model\Invoice\Installment::STATUS_PAYMENT_UNPAID]);
+            ->where(
+                ['order.id'                           => $id, 'invoice.status != ' . \Module\Order\Model\Invoice::STATUS_INVOICE_CANCELLED,
+                 'invoice_installment.status_payment' => \Module\Order\Model\Invoice\Installment::STATUS_PAYMENT_UNPAID]
+            );
 
         $rowset = Pi::db()->query($select);
         return count($rowset);
@@ -653,12 +723,17 @@ class Order extends AbstractApi
 
     public function isAlwaysAvailable($order)
     {
-        return array(
-            'status' => 1
-        );
+        return [
+            'status' => 1,
+        ];
     }
 
     public function showInInvoice($order, $product)
+    {
+        return true;
+    }
+
+    public function postCancelUpdate($order, $detail)
     {
         return true;
     }

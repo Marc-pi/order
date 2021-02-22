@@ -2,19 +2,24 @@
 
 [format]html[/format]
 
-[subject]سفارش شما[/subject]
+[subject]%site_name% - اطلاعات سفارش شما[/subject]
 
 [body]
 <div style="padding: 1px; direction: rtl;">
 	<h3 style="font-size: 1.1em;">%first_name% %last_name% عزیز</h3>
-	<div style="padding: 3px 0; margin: 1px; 0">سفارش شما با شماره <strong>%order_id%</strong> و به مبلغ %product_price% و شامل موارد %product_list% در وب سایت %site_name% ثبت گردید. برای مشاهده جزئیات سفارش بر روی لینک زیر کلیک نمایید</div>
-	<div style="padding: 3px 0; margin: 1px; 0">
+	div style="padding: 3px 0; margin: 1px 0;">از ثبت سفارش شما سپاسگزاریم !</div>
+	<div style="padding: 3px 0; margin: 1px 0;">سفارش شما با شناسه <strong>%order_id%</strong> در وب سایت %site_name% با موفقیت ثبت شد.</div>
+	<div style="padding: 3px 0; margin: 1px 0;">فهرست خدمات / محصولات خریداری شده شما به شرح زیر است : %product_list%.</div>
+	<div style="padding: 3px 0; margin: 1px 0;">برای مشاهده جزئیات لطفا در وب سایت وارد شوید و بر روی لینک زیر کلیک نمایید.</div>
+	<div style="padding: 3px 0; margin: 1px 0;">
         <a href="%order_link%" title="Order details">%order_link%</a>
 	</div>
-	<div style="padding: 3px 0; margin: 1px; 0">لطفا به این پیام پاسخی ندهید</div>
+	<div style="padding: 3px 0; margin: 1px 0;">لطفا به این ایمیل پاسخ ندهید</div>
 	<div style="margin-top: 10px">
         <a href="%site_url%" title="%site_name%">%site_name%</a>
     </div>
     <div>%site_mail_footer%</div>
+    <div style="text-align:center; margin:10px 0;font-size:0.8em; color:#777"> %sellerinfo% </div>
+
 </div>
 [/body]

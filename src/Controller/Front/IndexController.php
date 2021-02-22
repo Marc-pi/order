@@ -17,7 +17,7 @@ use Module\Order\Form\RemoveForm;
 use Pi;
 use Pi\Mvc\Controller\ActionController;
 use Pi\Paginator\Paginator;
-use Zend\Json\Json;
+use Laminas\Json\Json;
 
 class IndexController extends ActionController
 {
@@ -41,15 +41,17 @@ class IndexController extends ActionController
         foreach ($orders as $order) {
             $order['installments'] = Pi::api('installment', 'order')->getInstallmentsFromOrder($order['id']);
             $countInstallment      = 0;
-            $order['can_pay'] = false;
-            $toPaid = 0;
+            $order['can_pay']      = false;
+            $toPaid                = 0;
             foreach ($order['installments'] as $installment) {
                 if ($installment['status_invoice'] != \Module\Order\Model\Invoice::STATUS_INVOICE_CANCELLED) {
                     $countInstallment++;
                     if ($installment['status_payment'] == \Module\Order\Model\Invoice\Installment::STATUS_PAYMENT_UNPAID) {
                         $toPaid += $installment['due_price'];
                     }
-                    if ($installment['status_payment'] == \Module\Order\Model\Invoice\Installment::STATUS_PAYMENT_UNPAID && $installment['gateway'] != 'manual') {
+                    if ($installment['status_payment'] == \Module\Order\Model\Invoice\Installment::STATUS_PAYMENT_UNPAID
+                        && $installment['gateway'] != 'manual'
+                    ) {
                         $order['can_pay'] = true;
                     }
                 }
@@ -106,7 +108,6 @@ class IndexController extends ActionController
         $this->view()->assign('user', $user);
         $this->view()->assign('config', $config);
         $this->view()->assign('paginator', $paginator);
-
     }
 
     public function errorAction()
@@ -142,7 +143,5 @@ class IndexController extends ActionController
 
         Pi::api('order', 'order')->cancelOrder($id);
         $this->jump(['', 'action' => 'index'], __('Order canceled'));
-
     }
-
 }

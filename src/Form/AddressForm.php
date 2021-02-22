@@ -83,9 +83,10 @@ class AddressForm extends BaseForm
                     'mobile',
                     'address1',
                     'address2',
-                    'zip_code',
-                    'city',
                     'country',
+                    'state',
+                    'city',
+                    'zip_code',
                 ],
             ];
         }
@@ -115,8 +116,8 @@ class AddressForm extends BaseForm
                 [
                     'name'       => 'account_type',
                     'attributes' => [
-                        'type' => 'hidden',
-                        'value' => $this->config['address_type']
+                        'type'  => 'hidden',
+                        'value' => $this->config['address_type'],
                     ],
                 ]
             );
@@ -446,7 +447,6 @@ class AddressForm extends BaseForm
                         ],
                     ]
                 );
-
             } else {
                 if (($key = array_search('first_name', $groups['individual']['elements'])) !== false) {
                     unset($groups['individual']['elements'][$key]);
